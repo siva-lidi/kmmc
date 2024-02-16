@@ -1,0 +1,71 @@
+<?php
+
+use App\Http\Controllers\LoginController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DailypatientController;
+use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\OutpatientsController;
+use Illuminate\Support\Facades\Redirect;
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+
+Route::get('/', [LoginController::class,'login'])->name('login');
+Route::POST('/check', [LoginController::class,'check'])->name('check');
+Route::get('/logout', [LoginController::class,'logout'])->name('logout');
+
+Route::middleware('admin')->group(function(){
+//Dailypatient route
+Route::prefix('/dailypatient')->group(function(){
+    Route::get('/{name}',[DailypatientController::class,'index'])->name('dailypatient');
+    Route::get('/create/{id}',[DailypatientController::class,'create'])->name('dailypatient.create');
+    Route::post('/get-docid',[DailypatientController::class,'getDocId'])->name('ajax-doc');
+    Route::post('/get-age',[DailypatientController::class,'getAge'])->name('ajax-age');
+    Route::post('/get-mid',[DailypatientController::class,'getMid'])->name('ajax-mid');
+    Route::post('/get-ctype',[DailypatientController::class,'getCtype'])->name('ajax-ctype');
+    Route::post('/get-fw-id',[DailypatientController::class,'getFwid'])->name('ajax-fw-id');
+    Route::post('/get-report',[DailypatientController::class,'getReport'])->name('get-report');
+    Route::post('/store',[DailypatientController::class,'store'])->name('dailypatient.store');
+    Route::get('/view/{id}',[DailypatientController::class,'view'])->name('dailypatient.view');
+    Route::get('/edit/{id}',[DailypatientController::class,'edit'])->name('dailypatient.edit');
+    Route::put('/update/{id}',[DailypatientController::class,'update'])->name('dailypatient.update');
+    Route::get('/today-ops', [DailypatientController::class, 'todayOps'])->name('dailypatient.todayops');
+    Route::delete('/delete/{id}',[DailypatientController::class,'delete'])->name('dailypatient.delete');
+});
+
+
+//Outpatients route
+Route::prefix('/outpatients')->group(function(){
+    Route::get('/',[OutpatientsController::class,'index'])->name('outpatients');
+    Route::get('/create',[OutpatientsController::class,'create'])->name('outpatients.create');
+    Route::post('/store',[OutpatientsController::class,'store'])->name('outpatient.store');
+    Route::get('/viewOp',[OutpatientsController::class,'viewAll'])->name('outpatients.view-all');
+    Route::get('/print/{patientid}',[OutpatientsController::class,'print'])->where('patientid', '(.*)')->name('outpatient.print');
+    Route::get('/view/{patientid}',[OutpatientsController::class,'view'])->where('patientid', '(.*)')->name('outpatient.view');
+    Route::get('/edit/{patientid}',[OutpatientsController::class,'edit'])->where('patientid', '(.*)')->name('outpatient.edit');
+    Route::put('//update/{patientid}',[OutpatientsController::class,'update'])->where('patientid', '(.*)')->name('outpatient.update');
+    Route::get('/search',[OutpatientsController::class,'search'])->name('outpatient.search');
+    Route::post('/get',[OutpatientsController::class,'get'])->name('outpatient.get');
+    Route::get('/find',[OutpatientsController::class,'find'])->name('outpatients.find');
+    Route::post('/filter',[OutpatientsController::class,'filter'])->name('outpatients.filter');
+    Route::get('/today-ops', [OutpatientsController::class, 'todayOps'])->name('outpatients.todayops');
+    Route::delete('/delete/{id}',[OutpatientsController::class,'destroy'])->name('outpatients.delete');
+});
+
+
+Route::get('/inpatient-print', function () {
+    $externalUrl = 'http://172.16.1.26:8080/KMMC/ipprint/inpatient_account_home.php';
+    return Redirect::away($externalUrl);
+})->name('ipprint');
+
+});
