@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Models;
 
-use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Auth\Authenticatable;
 
-class Admin
+class Admin extends Model implements AuthenticatableContract
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
+    use Authenticatable;
+
+    protected $guarded=[];
+    protected $table='admin';
+    protected $guard='admin';
+    protected $connection='mysql2';
+
+    public function getAuthPassword()
     {
-        if(!Auth::guard('admin')->check()){
-            return redirect()->route('login');
-        }
-        return $next($request);
+        return $this->Password;
     }
 }
